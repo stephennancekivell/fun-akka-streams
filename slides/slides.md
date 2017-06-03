@@ -11,15 +11,13 @@ by Stephen Nancekivell
 # Agenda
 
 * what are streams
-* reactive streams
-* back pressure
-* meta analysis
-* hello world
-* my favourite combinators
-* graph dsl
-* alpakka
+* back pressure & reactive streams
+* Akka streams code
+* my favourite features
+* Graph dsl
+* alpakka open source connectors
 * thanks / further reading
-* where is it used, good use cases...
+
 
 * comparison at optimization
 
@@ -28,96 +26,137 @@ by Stephen Nancekivell
 # What are streams
 
 * scala.collection.Stream
-* java 8 streams
-* spark streams
+* Java 8 streams
+* Spark streaming
 * iterator
+* kafka streaming aws kinesis, google pub sub
+* pub subs ActiveMQ etc, 
 
 ---
 
 # Properties of streams
 
-# All Streams are
-* unbounded
+* infinite data
+* cant fit in memory
 * processed item by item
-* can perform many collection operations
-** map
-** filter
-* cant perform
-** find
-** exists
 
-Batch processing has a lot of easy optimizations, you can use batch database operations, do in memory lookups etc.
-But we need to be careful with batch sizes,, batch must fit in memory, must make sure we dont crash down stream, database api, web rest api. 
 
-Stream processing, we can make use of micro batching, but without the right tools its going to be harder. How do you join a updating-database to stream processing.
+can perform many collection operations
+* map
+* filter
 
-Can we describe a case, where batch process is obvious. Streaming micro batching different steps behave at different rates.
-
-Fast data.
-https://www.lightbend.com/blog/fast-data-architectures-for-streaming-applications-free-oreilly-mini-book-by-dean-wampler
+cant perform
+* find
+* exists
 
 ---
 
-# Consuming streams
+# Producers Consumers
 
-push vs pull
+```scala
+Producer ~> B ~> C ~> Consumer
+```
+
+---
+
+# Producers Consumers
+
+### push or pull API
 
 push onto a queue, which could eventually overflow. or drop messages.
 pull must block the subscriber,
 
+* drop
+* overflow
+* block
+
 pull is also more chatty, if asking for every message.
+
+---
+
+# how to optimize push / pull api
+
+resource allocation, balance different stages
+
+
+
+---
+
+# back pressure
 
 back pressure
 
 ---
 
-# reactive
+So for a push API its very important that you ou know how fast each step is.
+For resource allocation, to prevent errors. Which is a maintaince burden, particulalry in a changing environment. Or where network latencies are a factor.
 
-* Responsive
-* Message driver
-* Elastic
-* Resilient
+Back pressure is the idea of slowing down a producer when the consumer cant keep up, and it has lots of nice properties.
+* You dont need to worry about buffer overflow
+* you can keep buffer bloat to a minimum.
+* decrease latencies
 
---- 
+---
 
-# Reative streams
+# akka streams is push & pull
 
-is a interface project. Not an implementation.
+Sources comunicate demand,
 
-Joint effort between different people in industry.
-
-Provide common interface between different implementations. java 9 flow will be one. rxJava, slick(Relational database), mongodb driver. dot net?
-
+Cost of pull is very low,
+Slow producer effectively becomes push. It knows it was asked for 4 and only delivered 1, so it has to push 3 more before it waits for pull.
 
 
-* stand alone project. joint effort from different languages
-* Not just an API, includes protcol, it defines the behavours of back pressure.
-* java9 Flow API
-* or today with scala
+# TODO add the picture akka streams in 1 slide
+
+---
+
+# When this shit gets hard with out back pressure
+
+# Async or sync streaming
+
+Great for non blocking api's. which lead to efficent code. So your treating all code as if it were async, like it were over a network, and its so easy.
+
+You dont have to guess how slow each step is and allocate thread pools fear each step in the process.
+
+---
+
+# Reative Streams
+
+reactive-streams.org
+
+Is a interface project. Not an implementation.
+Defines how you should use the interface, the order that you should call the methods, and the rules around that.
+
+Joint effort between different groups in industry.
+
+Different implementations will work together. Think java to scala to haskell. You dont want to crash your friends java server because it doesnt implement reactive streams the same way.
+
+---
+
+# Reative Streams
+
+* Java 9 flow
+* rxJava
+* slick(Relational database)
+* reactive mongodb driver
+* akka streams
+* fs2 (formerly scalaz-streams)
+* swave
 
 ---
 
 # Does it matter
 
 * case 1 credit karma,
-** https://engineering.creditkarma.com/data/akka-actors-akka-streams-when-you-should-care/?utm_content=bufferb0c4a&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
-* case 2
+** https://engineering.creditkarma.com/data/akka-actors-akka-streams-when-you-should-care
 
 ---
 
-# How to make
-
-Reusable pieces
+# Akka Streams 
 
 Source ~> Flow ~> Sink
 
----
-
-# How to make
-
 Reusable pieces
-
-You can package up a graph into a flow
 
 ---
 
@@ -149,16 +188,15 @@ val sink: Sink[Int] = ???
 
 # my favourite combinators
 
-```
+```scala
 Flow[A]
 .map(x => y)
 .grouped(2)
-.groupedWithin(2, 5.seconds)
-.mapConcat(batch => ???: Seq[?])
-.throttle(elements = 2, per = 1.seconds, maximumBurst = 10, mode = ThrottleMode.Shaping)
-.batch(2, Seq(_))(_ :+ _)
+.groupedWithin(2, 1.second)
+.mapConcat(item => makeBatch(item): Seq[?])
+.throttle(elements = 2, per = 1.second,
+          maximumBurst = 10, mode = ThrottleMode.Shaping)
 .mapAsync(2)(item => ???: Future[?])
-.mapAsyncUnordered(2)(item => ???: Future[?])
 ```
 
 ---
@@ -193,11 +231,23 @@ val g = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder: GraphDSL.B
 })
 ```
 
+Graph can be treated as a flow.
+
 ---
 
 # Alpkka
 
 http://github.com/akka/alpakka
+
+---
+
+# Futher info
+
+
+
+# thank you
+
+
 
 ---
 
@@ -218,6 +268,18 @@ I have this false promise, if you use akka streams you will never have to do tha
 Big claim.
 Dont actually hold me to it, I dont believe in silver bullets. But thats the ideal for we should test against, we should challenge.
 
+
+# batch rant 
+
+Batch processing has a lot of easy optimizations, you can use batch database operations, do in memory lookups etc.
+But we need to be careful with batch sizes,, batch must fit in memory, must make sure we dont crash down stream, database api, web rest api. 
+
+Stream processing, we can make use of micro batching, but without the right tools its going to be harder. How do you join a updating-database to stream processing.
+
+Can we describe a case, where batch process is obvious. Streaming micro batching different steps behave at different rates.
+
+Fast data.
+https://www.lightbend.com/blog/fast-data-architectures-for-streaming-applications-free-oreilly-mini-book-by-dean-wampler
 
 
 
