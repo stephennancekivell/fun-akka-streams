@@ -115,9 +115,8 @@ class: center, middle
 
 # Optimizeing Push
 
-Resource allocation
-
-balance different stages
+Fast producer
+.center[.w100[![push](./push1.jpg)]]
 
 ---
 
@@ -154,11 +153,8 @@ Slow producer effectively push
 reactive-streams.org
 
 Is a interface project. Not an implementation.
-Defines how you should use the interface, the order that you should call the methods, and the rules around that.
 
 Joint effort between different groups in industry.
-
-Different implementations will work together. Think java to scala to haskell. You dont want to crash your friends java server because it doesnt implement reactive streams the same way.
 
 Netflix, Pivotal (SpringSource), Red Hat, Twitter, Lightbend, Oracle, ...
 
@@ -170,6 +166,7 @@ Netflix, Pivotal (SpringSource), Red Hat, Twitter, Lightbend, Oracle, ...
 * rxJava
 * slick(Relational database)
 * reactive mongodb driver
+* reactive kafka
 * akka streams
 * fs2 (formerly scalaz-streams)
 * swave
@@ -185,9 +182,13 @@ Netflix, Pivotal (SpringSource), Red Hat, Twitter, Lightbend, Oracle, ...
 
 # Akka Streams 
 
+```scala
 Source ~> Flow ~> Sink
+```
 
 Reusable pieces
+
+Lazy
 
 ---
 
@@ -252,7 +253,7 @@ Flow[A]
 # Graph DSL
 
 ```scala
-val g = RunnableGraph.fromGraph(GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
+RunnableGraph.fromGraph(GraphDSL.create() { implicit builder: GraphDSL.Builder[NotUsed] =>
   import GraphDSL.Implicits._
   val in = Source(1 to 10)
   val out = Sink.ignore
@@ -279,6 +280,7 @@ Alpakka Project
 http://github.com/akka/alpakka
 
 Others
+
 reactive kafka
 
 ---
@@ -292,7 +294,7 @@ reactive kafka
 
 ---
 
-# Futher info
+# Futher Info
 * lightbend confrence presentations, Konrad, Viktor
 * Akka docs, really good.
 
