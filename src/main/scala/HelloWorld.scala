@@ -64,6 +64,15 @@ object HelloWorld1 {
       .runWith(Sink.foreach(s => println(s)))
 
   out.onComplete(_ => system.terminate())(system.dispatcher)
+
+  import akka.pattern.ask
+
+  val ref: ActorRef = ???
+
+  Source.queue()
+
+  Flow[String]
+    .mapAsync(2)(ref ? _)
 }
 
 object GraphDSLExample {
