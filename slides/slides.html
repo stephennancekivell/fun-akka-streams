@@ -91,14 +91,13 @@ by Stephen Nancekivell
   * Community
 
 ---
+class: center, middle
 
-# Who Am I
+.w50[![lightbend](./lightbend-full-color-H1gGNav8JW.svg)]
 
-Stephen Nancekivell
+http://www.lightbend.com
 
-.
-## Lightbend
-make akka streams http://akka.io
+akka streams http://akka.io
 
 ---
 
@@ -111,6 +110,7 @@ make akka streams http://akka.io
 * ActiveMQ and friends
 * iterator
 
+.w50[![stream](./stream.jpeg)]
 ---
 
 # Properties of streams
@@ -185,7 +185,7 @@ class: center, middle
 
 ---
 
-# Optimizeing Push
+# Optimizing Push
 
 Fast producer
 .center[.w100[![push](./push1.jpg)]]
@@ -297,6 +297,7 @@ Flow[A]
 Flow[A]
   .grouped(10)
   .groupedWithin(10, 1.second)
+  .sliding(5,1)
 ```
 
 ---
@@ -381,63 +382,6 @@ reactive kafka
 ---
 
 # End
-
----
-
-
-
-So for a push API its very important that you ou know how fast each step is.
-For resource allocation, to prevent errors. Which is a maintaince burden, particulalry in a changing environment. Or where network latencies are a factor.
-
-Back pressure is the idea of slowing down a producer when the consumer cant keep up, and it has lots of nice properties.
-* You dont need to worry about buffer overflow
-* you can keep buffer bloat to a minimum.
-* decrease latencies
----
-
-# When this shit gets hard with out back pressure
-
-# Async or sync streaming
-
-Great for non blocking api's. which lead to efficent code. So your treating all code as if it were async, like it were over a network, and its so easy.
-
-You dont have to guess how slow each step is and allocate thread pools fear each step in the process.
-
----
-
-# batch vs streams
-
-Counter example mongo s3 uploader task, 
-
-A complicated process with parallel steps is impossible to optimze. The time each step takes is outside of your control.
-
-But where you have to say stage1 needs 4 threads, stage 2 only needs 1 thread, stage3 needs 8. These are all doing IO, there performance is based on network or disk latencies which can change outside your control.
-
----
-
-# promise
-
-I have this false promise, if you use akka streams you will never have to do that again. You just describe the steps and the back pressure will take care of optimizing for you.
-
-Big claim.
-Dont actually hold me to it, I dont believe in silver bullets. But thats the ideal for we should test against, we should challenge.
-
-
-# batch rant 
-
-Batch processing has a lot of easy optimizations, you can use batch database operations, do in memory lookups etc.
-But we need to be careful with batch sizes,, batch must fit in memory, must make sure we dont crash down stream, database api, web rest api. 
-
-Stream processing, we can make use of micro batching, but without the right tools its going to be harder. How do you join a updating-database to stream processing.
-
-Can we describe a case, where batch process is obvious. Streaming micro batching different steps behave at different rates.
-
-Fast data.
-https://www.lightbend.com/blog/fast-data-architectures-for-streaming-applications-free-oreilly-mini-book-by-dean-wampler
-
-
-
-
 
 		</textarea>
 		<script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script>

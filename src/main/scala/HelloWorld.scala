@@ -3,6 +3,7 @@ import java.nio.file.Paths
 import akka.{Done, NotUsed}
 import akka.actor._
 import akka.stream._
+import akka.stream.impl.fusing.Sliding
 import akka.stream.scaladsl._
 import akka.util.ByteString
 
@@ -58,6 +59,7 @@ object HelloWorld1 {
     Source(0 to 4)
       .map(x => x + 1)
       .log("x")
+      .sliding(10, 1)
       .map(x => x + 1)
       .log("y")
       .mapAsync(2)(Future.successful)
