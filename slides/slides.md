@@ -113,10 +113,9 @@ class: center, middle
 
 ---
 
-# Optimizing Push
+# Dealing with Rate
 
-Fast producer
-.center[.w100[![push](./push1.jpg)]]
+.center[.w100[![push](./push-rate.jpg)]]
 
 ---
 
@@ -156,7 +155,7 @@ Is a interface project. Not an implementation.
 
 Joint effort between different groups in industry.
 
-Netflix, Pivotal (SpringSource), Red Hat, Twitter, Lightbend, Oracle, ...
+Lightbend, Netflix, Pivotal, Red Hat, Twitter, Oracle, ...
 
 ---
 
@@ -170,6 +169,8 @@ Netflix, Pivotal (SpringSource), Red Hat, Twitter, Lightbend, Oracle, ...
 * akka streams
 * fs2 (formerly scalaz-streams)
 * swave
+
+and more
 
 ---
 
@@ -295,7 +296,8 @@ reactive kafka
 
 ---
 
-# Futher Info
+# Futher Reading
+
 * lightbend confrence presentations, Konrad, Viktor
 * Akka docs, really good.
 
