@@ -141,9 +141,9 @@ Communicates demand
 
 # Akka Streams
 
-Slow consumer effectively pull
+Fast consumer effectively push
 
-Slow producer effectively push
+Slow consumer effectively pull
 
 ---
 
