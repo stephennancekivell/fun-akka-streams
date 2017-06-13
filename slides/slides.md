@@ -147,7 +147,7 @@ Slow producer effectively push
 
 ---
 
-# Reative Streams
+# Reactive Streams
 
 reactive-streams.org
 
@@ -159,7 +159,7 @@ Lightbend, Netflix, Pivotal, Red Hat, Twitter, Oracle, ...
 
 ---
 
-# Reative Streams
+# Reactive Streams
 
 * Java 9 flow
 * rxJava
@@ -298,7 +298,7 @@ reactive kafka
 
 # Futher Reading
 
-* lightbend confrence presentations, Konrad, Viktor
+* lightbend conference presentations, Konrad, Viktor
 * Akka docs, really good.
 
 
